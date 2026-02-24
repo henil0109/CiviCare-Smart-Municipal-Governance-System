@@ -1,0 +1,10 @@
+flask
+flask-cors
+pymongo
+pyjwt
+bcrypt
+scikit-learn
+pandas
+numpy
+python-dotenv
+Flask-Mail

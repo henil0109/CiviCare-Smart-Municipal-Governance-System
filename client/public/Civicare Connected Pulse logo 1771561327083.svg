@@ -1,0 +1,64 @@
+<svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient for the C shape (Vertical: Green/Teal to Blue) -->
+    <linearGradient id="cGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" /> <!-- Green Top -->
+      <stop offset="50%" style="stop-color:#22d3ee;stop-opacity:1" /> <!-- Cyan Middle -->
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" /> <!-- Blue Bottom -->
+    </linearGradient>
+    
+    <!-- Gradient for the Pulse (Horizontal: Blue to Teal) -->
+    <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <g transform="translate(80, 20) scale(1.1)">
+    <!-- 
+      The "C" Shape: Fluid Crescent
+      Instead of a geometric ring, this is a path that varies in width.
+      Thicker at the back (left), tapering to rounded points at top and bottom.
+    -->
+    <path d="M 120 40 
+             C 40 40, 20 120, 20 120 
+             C 20 120, 40 200, 120 200 
+             C 135 200, 145 195, 145 195
+             C 145 195, 80 180, 80 120
+             C 80 60, 145 45, 145 45
+             C 145 45, 135 40, 120 40 Z" 
+          fill="url(#cGradient)" />
+
+    <!-- Pulse Start Line (Centered in C gap) -->
+    <!-- Adjusted starting X to match the new C inner curve -->
+    <path d="M 140 120 L 190 120" stroke="url(#pulseGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+    <!-- Pulse Wave -->
+    <path d="M 190 120 L 205 80 L 225 160 L 245 90 L 260 120" 
+          stroke="url(#pulseGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+    <!-- Connector to Heart -->
+    <path d="M 260 120 L 280 120" stroke="url(#pulseGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+    <!-- Heart Shape -->
+    <path d="M 280 120
+             C 280 100, 295 90, 310 100
+             C 325 90, 340 100, 340 120
+             Q 340 145, 310 165
+             Q 280 145, 280 120 Z"
+          stroke="url(#pulseGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          
+     <!-- Heart Highlight -->
+    <path d="M 320 105 A 5 5 0 0 1 330 110" stroke="url(#pulseGradient)" stroke-width="5" stroke-linecap="round" fill="none" />
+
+  </g>
+
+  <!-- Text -->
+  <g transform="translate(0, 280)">
+    <!-- Main Text in White - Clean, no dots -->
+    <text x="250" y="0" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="700" font-size="75" fill="#ffffff" text-anchor="middle">
+      CiviCare
+    </text>
+  </g>
+  
+</svg>
