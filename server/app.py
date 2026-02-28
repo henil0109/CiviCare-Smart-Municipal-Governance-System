@@ -64,17 +64,17 @@ mail = Mail(app)
 
 # Database Setup
 try:
-    client = MongoClient(MONGO_URI)
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
     client.admin.command('ping')
+    db = client.civicare_db
+    users_collection = db.users
+    complaints_collection = db.complaints
+    notifications_collection = db.notifications
+    teams_collection = db.teams
     print(f"Connected to MongoDB at {MONGO_URI}")
 except Exception as e:
-    print(f"WARNING: Could not connect to MongoDB: {e}")
-
-db = client.civicare_db
-users_collection = db.users
-complaints_collection = db.complaints
-notifications_collection = db.notifications
-teams_collection = db.teams
+    print(f"ERROR: Could not connect to MongoDB: {e}")
+    raise RuntimeError(f"MongoDB connection failed: {e}")
 
 # --- Helpers ---
 def token_required(f):
