@@ -37,11 +37,13 @@ load_dotenv()
 from flask_mail import Mail, Message
 
 app = Flask(__name__)
-CORS(app)
+# Allow requests from the frontend (Vercel URL set via CLIENT_URL env var)
+_allowed_origins = os.environ.get('CLIENT_URL', '*')
+CORS(app, origins=_allowed_origins)
 app.json_encoder = JSONEncoder
 
 # Configuration
-app.config['SECRET_KEY'] = 'supersecretkey_civicare_2025' # Change in production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey_civicare_2025')
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/civicare_db')
 
 # Email Config
