@@ -1,6 +1,6 @@
 flask
 flask-cors
-pymongo
+pymongo[srv]
 pyjwt
 bcrypt
 scikit-learn
@@ -9,3 +9,4 @@ numpy
 python-dotenv
 Flask-Mail
 gunicorn
+certifi

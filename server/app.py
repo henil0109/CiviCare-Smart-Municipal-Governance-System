@@ -5,6 +5,7 @@ import os
 import pymongo
 from pymongo import MongoClient
 from bson import ObjectId
+import certifi
 import jwt
 import datetime
 from functools import wraps
@@ -64,7 +65,7 @@ mail = Mail(app)
 
 # Database Setup
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000, tlsCAFile=certifi.where())
     client.admin.command('ping')
     db = client.civicare_db
     users_collection = db.users
