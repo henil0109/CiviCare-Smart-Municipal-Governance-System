@@ -4,9 +4,12 @@ import App from './App.jsx'
 import './index.css'
 import axios from 'axios'
 
-// Set global API base URL — in production this points to Render backend
-// In dev, falls back to '' (relative), which is handled by Vite proxy
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || ''
+// Set global API base URL
+// In dev mode: empty string (Vite proxy handles /api/* → localhost:5000)
+// In production: hardcoded Render backend URL
+axios.defaults.baseURL = import.meta.env.DEV
+    ? ''
+    : 'https://civicare-smart-municipal-governance.onrender.com'
 
 // GLOBAL ERROR TRAP: Displays errors if React fails to mount
 window.onerror = function (message, source, lineno, colno, error) {
