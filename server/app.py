@@ -38,9 +38,10 @@ load_dotenv()
 from flask_mail import Mail, Message
 
 app = Flask(__name__)
-# Allow requests from the frontend (Vercel URL set via CLIENT_URL env var)
-_allowed_origins = os.environ.get('CLIENT_URL', '*')
-CORS(app, origins=_allowed_origins)
+# CORS: use CORS_ORIGINS env var for explicit control, or CLIENT_URL, or allow all (*)
+# This is separate from CLIENT_URL which is only used for building email links
+_cors_origins = os.environ.get('CORS_ORIGINS', os.environ.get('CLIENT_URL', '*'))
+CORS(app, origins=_cors_origins, supports_credentials=True)
 app.json_encoder = JSONEncoder
 
 # Configuration
