@@ -100,8 +100,8 @@ const Register = () => {
                         We've sent a verification link to <strong>{formData.email}</strong>.<br />
                         Please verify your account to access the dashboard.
                     </p>
-                    <div className="p-4 bg-gray-50 rounded-xl mb-6 text-sm text-gray-500 border border-gray-100">
-                        <span className="font-semibold text-gray-700">Developer Note:</span> Check the Server Console/Terminal for the simulated email link.
+                    <div className="p-4 bg-blue-50 rounded-xl mb-6 text-sm text-blue-700 border border-blue-100">
+                        <span className="font-semibold">Didn't receive it?</span> Check your spam/junk folder. The email may take a minute or two to arrive.
                     </div>
                     <Link to="/login">
                         <Button className="w-full">Return to Login</Button>
@@ -183,18 +183,18 @@ const Register = () => {
                                         <div className="flex gap-1 h-1.5 mb-1.5">
                                             {[...Array(4)].map((_, i) => (
                                                 <div key={i} className={`h-full flex-1 rounded-full transition-all duration-300 ${i < passScore
-                                                        ? passScore === 1 ? 'bg-red-500'
-                                                            : passScore === 2 ? 'bg-yellow-400'
-                                                                : passScore === 3 ? 'bg-blue-500'
-                                                                    : 'bg-green-500'
-                                                        : 'bg-gray-200'
+                                                    ? passScore === 1 ? 'bg-red-500'
+                                                        : passScore === 2 ? 'bg-yellow-400'
+                                                            : passScore === 3 ? 'bg-blue-500'
+                                                                : 'bg-green-500'
+                                                    : 'bg-gray-200'
                                                     }`} />
                                             ))}
                                         </div>
                                         <p className={`text-xs font-semibold ${passScore === 1 ? 'text-red-500' :
-                                                passScore === 2 ? 'text-yellow-500' :
-                                                    passScore === 3 ? 'text-blue-500' :
-                                                        passScore === 4 ? 'text-green-600' : 'text-gray-400'
+                                            passScore === 2 ? 'text-yellow-500' :
+                                                passScore === 3 ? 'text-blue-500' :
+                                                    passScore === 4 ? 'text-green-600' : 'text-gray-400'
                                             }`}>
                                             {passScore === 0 ? '' : passScore === 1 ? 'Weak' : passScore === 2 ? 'Fair' : passScore === 3 ? 'Good' : 'Strong'}
                                         </p>
