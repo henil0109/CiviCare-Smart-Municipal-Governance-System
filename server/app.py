@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import uuid
+import threading
 from flask_cors import CORS
 import os
 import pymongo
@@ -49,13 +50,14 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey_civicare
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/civicare_db')
 
 # Email Config
-# NOTE: Strip spaces from app password (Gmail shows it with spaces, but SMTP needs no spaces)
+# NOTE: Port 587 (STARTTLS) is used because Render blocks outbound port 465 (SSL).
+# Strip spaces from app password (Gmail shows it with spaces, SMTP needs no spaces).
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 465))
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '').replace(' ', '')
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'False') == 'True'
-app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'True') == 'True'
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False') == 'True'
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME', ''))
 app.config['MAIL_SUPPRESS_SEND'] = False  # Always send emails (not suppressed)
 
@@ -157,36 +159,37 @@ def register():
     except pymongo.errors.DuplicateKeyError:
         return jsonify({"message": "User already exists"}), 400
     
-    # SEND REAL EMAIL
-    try:
-        msg = Message("Verify your CiviCare Account",
-                      recipients=[data['email']])
-        
-        # Use CLIENT_URL env var (must be set to Vercel URL in production, e.g. https://xxx.vercel.app)
-        base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
-        if not base_url:
-            print("WARNING: CLIENT_URL env var is not set! Verification link will be broken.")
-            base_url = "http://localhost:5173"  # Safe local fallback only
+    # SEND VERIFICATION EMAIL (in background thread so it never blocks/times-out the HTTP response)
+    base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
+    if not base_url:
+        print("WARNING: CLIENT_URL env var is not set! Verification link will point to localhost.")
+        base_url = "http://localhost:5173"
+    link = f"{base_url}/verify?token={token}"
 
-        link = f"{base_url}/verify?token={token}"
-        
-        msg.body = f"Welcome to CiviCare! \n\nPlease click the link below to verify your account:\n{link}\n\nIf you did not make this request, please ignore."
-        msg.html = f"""
-        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
-          <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
-          <p>Welcome! Please click the button below to verify your email address:</p>
-          <a href="{link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
-            Verify Email
-          </a>
-          <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
-          <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
-        </div>"""
-        mail.send(msg)
-        print(f"Verification email sent to {data['email']} with link: {link}")
-    except Exception as e:
-        print(f"ERROR sending verification email to {data['email']}: {type(e).__name__}: {e}")
-        # Don't fail registration if email fails — user is saved, they can use resend
+    def send_verification_email(app_ctx, recipient, verification_link):
+        with app_ctx:
+            try:
+                msg = Message("Verify your CiviCare Account", recipients=[recipient])
+                msg.body = f"Welcome to CiviCare!\n\nClick below to verify your account:\n{verification_link}\n\nIf you didn't request this, ignore this email."
+                msg.html = f"""
+                <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
+                  <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
+                  <p>Welcome! Click the button below to verify your email:</p>
+                  <a href="{verification_link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
+                    Verify Email
+                  </a>
+                  <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
+                  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
+                  <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
+                </div>"""
+                mail.send(msg)
+                print(f"Verification email sent to {recipient} — link: {verification_link}")
+            except Exception as e:
+                print(f"ERROR sending verification email to {recipient}: {type(e).__name__}: {e}")
+
+    t = threading.Thread(target=send_verification_email, args=(app.app_context(), data['email'], link))
+    t.daemon = True
+    t.start()
     
     # Notify Admins of New Citizen
     if data.get('role', 'citizen') == 'citizen':
@@ -242,34 +245,37 @@ def resend_verification():
             {"$set": {"verification_token": token}}
         )
     
-    # Send Email
-    try:
-        msg = Message("Verify your CiviCare Account", recipients=[email])
-        
-        # Use CLIENT_URL env var (must be set to Vercel URL in production)
-        base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
-        if not base_url:
-            print("WARNING: CLIENT_URL env var is not set! Verification link will be broken.")
-            base_url = "http://localhost:5173"
+    # Send resend email in a background thread so it never causes a timeout
+    base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
+    if not base_url:
+        base_url = "http://localhost:5173"
+    link = f"{base_url}/verify?token={token}"
 
-        link = f"{base_url}/verify?token={token}"
-        msg.body = f"Welcome to CiviCare! \n\nPlease click the link below to verify your account:\n{link}\n\nIf you did not make this request, please ignore."
-        msg.html = f"""
-        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
-          <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
-          <p>Please click the button below to verify your email address:</p>
-          <a href="{link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
-            Verify Email
-          </a>
-          <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
-          <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
-        </div>"""
-        mail.send(msg)
-        return jsonify({"message": "Verification email resent successfully!"})
-    except Exception as e:
-        print(f"ERROR resending verification email to {email}: {type(e).__name__}: {e}")
-        return jsonify({"message": f"Failed to send email. Please try again later."}), 500
+    def send_resend_email(app_ctx, recipient, verification_link):
+        with app_ctx:
+            try:
+                msg = Message("Verify your CiviCare Account", recipients=[recipient])
+                msg.body = f"Welcome to CiviCare!\n\nClick below to verify your account:\n{verification_link}\n\nIf you didn't request this, ignore this email."
+                msg.html = f"""
+                <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
+                  <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
+                  <p>Please click the button below to verify your email:</p>
+                  <a href="{verification_link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
+                    Verify Email
+                  </a>
+                  <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
+                  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
+                  <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
+                </div>"""
+                mail.send(msg)
+                print(f"Resend verification email sent to {recipient}")
+            except Exception as e:
+                print(f"ERROR resending email to {recipient}: {type(e).__name__}: {e}")
+
+    t = threading.Thread(target=send_resend_email, args=(app.app_context(), email, link))
+    t.daemon = True
+    t.start()
+    return jsonify({"message": "Verification email resent! Please check your inbox (and spam folder)."})
 
 # --- Forgot / Reset Password ---
 @app.route('/api/auth/forgot-password', methods=['POST'])
