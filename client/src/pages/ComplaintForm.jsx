@@ -188,7 +188,7 @@ const ComplaintForm = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="max-w-5xl w-full bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/10 min-h-[600px]"
+                        className="max-w-5xl w-full bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/10 h-[88vh]"
                     >
                         {/* Sidebar / Progress */}
                         <div className="w-full md:w-80 bg-slate-900 text-white p-10 flex flex-col justify-between relative overflow-hidden">
