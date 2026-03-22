@@ -36,7 +36,7 @@ from ai_module import (
 from dotenv import load_dotenv
 load_dotenv()
 
-import resend
+import requests as http_requests
 
 app = Flask(__name__)
 # CORS: allow all origins by default (separate from CLIENT_URL which is only for email links)
@@ -48,34 +48,45 @@ app.json_encoder = JSONEncoder
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey_civicare_2025')
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/civicare_db')
 
-# Resend API Key (set RESEND_API_KEY in Render environment variables)
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
-if RESEND_API_KEY:
-    resend.api_key = RESEND_API_KEY
-else:
-    print("WARNING: RESEND_API_KEY is not set — emails will not be sent!")
+# Brevo (Sendinblue) Email API — HTTP-based, works on Render free tier
+# Free tier: 300 emails/day, sends to ANY email without domain verification
+# Set BREVO_API_KEY in Render environment variables
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+# The sender email must be verified in your Brevo account (same email you signed up with)
+EMAIL_FROM_ADDRESS = os.environ.get('EMAIL_FROM_ADDRESS', 'henilpatel0109@gmail.com')
+EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'CiviCare')
 
-# Email sender address
-# On Resend free tier without a custom domain, use: onboarding@resend.dev
-# With a verified domain, use your own address.
-EMAIL_FROM = os.environ.get('EMAIL_FROM', 'CiviCare <onboarding@resend.dev>')
+if not BREVO_API_KEY:
+    print("WARNING: BREVO_API_KEY is not set — emails will not be sent!")
 
 def send_email_async(to_email, subject, html_body):
-    """Send an email via Resend API in a background thread (never blocks the HTTP response)."""
+    """Send an email via Brevo HTTP API in a background thread (never blocks the HTTP response)."""
     def _send():
-        if not RESEND_API_KEY:
-            print(f"SKIP email to {to_email}: RESEND_API_KEY not configured")
+        if not BREVO_API_KEY:
+            print(f"SKIP email to {to_email}: BREVO_API_KEY not configured")
             return
         try:
-            resend.Emails.send({
-                "from": EMAIL_FROM,
-                "to": [to_email],
-                "subject": subject,
-                "html": html_body,
-            })
-            print(f"Email sent via Resend to {to_email} — subject: {subject}")
+            response = http_requests.post(
+                'https://api.brevo.com/v3/smtp/email',
+                headers={
+                    'api-key': BREVO_API_KEY,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                json={
+                    'sender': {'name': EMAIL_FROM_NAME, 'email': EMAIL_FROM_ADDRESS},
+                    'to': [{'email': to_email}],
+                    'subject': subject,
+                    'htmlContent': html_body
+                },
+                timeout=15
+            )
+            if response.status_code in (200, 201):
+                print(f"Email sent via Brevo to {to_email} — subject: {subject}")
+            else:
+                print(f"Brevo API error {response.status_code}: {response.text}")
         except Exception as e:
-            print(f"ERROR sending email via Resend to {to_email}: {type(e).__name__}: {e}")
+            print(f"ERROR sending email via Brevo to {to_email}: {type(e).__name__}: {e}")
     t = threading.Thread(target=_send, daemon=True)
     t.start()
 
