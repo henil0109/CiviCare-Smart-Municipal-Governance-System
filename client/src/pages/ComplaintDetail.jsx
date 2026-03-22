@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
-    ArrowLeft, MapPin, Calendar, AlertTriangle, CheckCircle, Clock, Zap, Users, FileText, Send, Truck, Clock3, Shield, Search, Hammer, Trophy, Filter, CheckSquare, TrendingUp, Activity
+    ArrowLeft, MapPin, Calendar, AlertTriangle, CheckCircle, Clock, Zap, Users, FileText, Send, Truck, Clock3, Shield, Search, Hammer, Trophy, Filter, CheckSquare, TrendingUp, Activity, Camera
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { motion } from 'framer-motion';
@@ -252,70 +252,134 @@ const ComplaintDetail = () => {
                         <CheckCircle size={200} className="text-green-600" />
                     </div>
 
+                    {/* Header */}
                     <div className="relative z-10 text-center mb-10">
-                        <div className="inline-block bg-green-100 text-green-800 px-6 py-2 rounded-full font-bold text-sm tracking-widest mb-4 border border-green-200">
-                            OFFICIAL RESOLUTION REPORT
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                            <div className="h-px w-16 bg-green-200" />
+                            <span className="bg-green-100 text-green-800 px-5 py-1.5 rounded-full font-bold text-xs tracking-widest border border-green-200">
+                                OFFICIAL RESOLUTION CERTIFICATE
+                            </span>
+                            <div className="h-px w-16 bg-green-200" />
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 font-serif">
-                            Problem Solved
+                        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 font-serif">
+                            ✅ Issue Resolved
                         </h2>
-                        <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-                            The issue has been successfully resolved and verified by the Municipal Corporation.
+                        <p className="text-base text-gray-600 max-w-xl mx-auto">
+                            This complaint has been officially resolved and verified by <strong>CiviCare Municipal Authority</strong>.
+                        </p>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Resolved on {complaint.resolution_report.resolved_at ? new Date(complaint.resolution_report.resolved_at).toLocaleString() : 'N/A'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                        <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-200">
-                            <p className="text-gray-500 text-xs uppercase tracking-wide font-bold mb-2">Complainant</p>
-                            <p className="text-lg font-bold text-gray-900 line-clamp-1">
-                                {complaint.resolution_report.citizen_snapshot?.name || 'Unknown'}
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="bg-blue-50 rounded-2xl p-5 text-center border border-blue-100">
+                            <p className="text-blue-500 text-xs uppercase tracking-wide font-bold mb-1">Complainant</p>
+                            <p className="text-base font-bold text-gray-900 line-clamp-1">
+                                {complaint.resolution_report.citizen_snapshot?.name || complaint.citizen_details?.username || 'Unknown'}
                             </p>
-                            <p className="text-xs text-blue-600">{complaint.resolution_report.citizen_snapshot?.phone || ''}</p>
+                            <p className="text-xs text-blue-600">{complaint.resolution_report.citizen_snapshot?.phone || complaint.citizen_details?.phone || ''}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-200">
-                            <p className="text-gray-500 text-xs uppercase tracking-wide font-bold mb-2">Resolved By</p>
-                            <p className="text-lg font-bold text-gray-900 line-clamp-1">{complaint.resolution_report.resolved_by}</p>
-                            <p className="text-xs text-gray-600">Authority</p>
+                        <div className="bg-green-50 rounded-2xl p-5 text-center border border-green-100">
+                            <p className="text-green-600 text-xs uppercase tracking-wide font-bold mb-1">Verified By</p>
+                            <p className="text-base font-bold text-gray-900">CiviCare</p>
+                            <p className="text-xs text-gray-500">Municipal Authority</p>
                         </div>
-                        <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-200">
-                            <p className="text-gray-500 text-xs uppercase tracking-wide font-bold mb-2">Time Taken</p>
-                            <p className="text-3xl font-extrabold text-gray-900">{complaint.resolution_report.metrics?.days_taken || '2'} Days</p>
-                            <p className="text-xs text-gray-600">{complaint.resolution_report.metrics?.status_note || ''}</p>
+                        <div className="bg-purple-50 rounded-2xl p-5 text-center border border-purple-100">
+                            <p className="text-purple-500 text-xs uppercase tracking-wide font-bold mb-1">Time Taken</p>
+                            <p className="text-3xl font-extrabold text-gray-900">{complaint.resolution_report.metrics?.days_taken || '—'}<span className="text-sm font-normal ml-1">days</span></p>
+                            <p className="text-xs text-gray-500">{complaint.resolution_report.metrics?.status_note || 'Completed'}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-200">
-                            <p className="text-gray-500 text-xs uppercase tracking-wide font-bold mb-2">Est. Cost</p>
-                            <p className="text-xl font-bold text-gray-700">
-                                {complaint.resolution_report.cost_snapshot || 'N/A'}
-                            </p>
+                        <div className="bg-amber-50 rounded-2xl p-5 text-center border border-amber-100">
+                            <p className="text-amber-600 text-xs uppercase tracking-wide font-bold mb-1">Est. Cost</p>
+                            <p className="text-lg font-bold text-gray-800">{complaint.resolution_report.cost_snapshot || 'N/A'}</p>
                         </div>
                     </div>
 
-                    <div className="bg-green-50 rounded-2xl p-8 border border-green-100 relative mb-6">
-                        <h3 className="text-green-900 font-bold mb-3 flex items-center gap-2">
-                            <FileText size={20} /> Work Log & Final Remarks
+                    {/* Supervisor Card */}
+                    {(complaint.supervisor_details || complaint.resolution_proof?.submitted_by) && (
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 mb-6 flex items-center gap-5">
+                            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-xl shrink-0 shadow-lg">
+                                {(complaint.supervisor_details?.username || complaint.resolution_proof?.submitted_by || 'S').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-0.5">Field Supervisor — Work Executed By</p>
+                                <p className="text-lg font-extrabold text-gray-900">{complaint.supervisor_details?.username || complaint.resolution_proof?.submitted_by || 'Assigned Supervisor'}</p>
+                                <div className="flex flex-wrap gap-3 mt-1">
+                                    {complaint.supervisor_details?.specialization && (
+                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                                            {complaint.supervisor_details.specialization}
+                                        </span>
+                                    )}
+                                    {complaint.supervisor_details?.ward && (
+                                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">
+                                            {complaint.supervisor_details.ward}
+                                        </span>
+                                    )}
+                                    {complaint.supervisor_details?.phone && (
+                                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">
+                                            📞 {complaint.supervisor_details.phone}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="hidden md:flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1.5 rounded-full font-bold text-xs border border-green-200">
+                                <CheckCircle size={14} /> Work Verified
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Before / After Photos */}
+                    {(complaint.resolution_proof?.before_image_url || complaint.resolution_proof?.image_url) && (
+                        <div className="mb-6">
+                            <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <Camera size={18} className="text-blue-500" /> Field Evidence — Before &amp; After
+                            </h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {complaint.resolution_proof.before_image_url && (
+                                    <div className="rounded-2xl overflow-hidden border-2 border-red-200 relative">
+                                        <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">BEFORE</div>
+                                        <img src={complaint.resolution_proof.before_image_url} alt="Before work" className="w-full h-52 object-cover" onError={(e) => { e.target.parentElement.style.display = 'none'; }} />
+                                    </div>
+                                )}
+                                {complaint.resolution_proof.image_url && (
+                                    <div className="rounded-2xl overflow-hidden border-2 border-green-200 relative">
+                                        <div className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">AFTER</div>
+                                        <img src={complaint.resolution_proof.image_url} alt="After work" className="w-full h-52 object-cover" onError={(e) => { e.target.parentElement.style.display = 'none'; }} />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Work Log & Remarks */}
+                    <div className="bg-green-50 rounded-2xl p-6 border border-green-100 relative">
+                        <h3 className="text-green-900 font-bold mb-4 flex items-center gap-2">
+                            <FileText size={18} /> Work Log &amp; Final Remarks
                         </h3>
                         <div className="space-y-4">
-                            <div>
-                                <p className="text-xs font-bold text-green-700 uppercase mb-1">Supervisor's Report</p>
-                                <p className="text-green-800 text-sm italic">
-                                    "{complaint.resolution_report.proof_summary?.remarks || 'Work completed as per standard operating procedure.'}"
+                            <div className="bg-white/70 rounded-xl p-4 border border-green-200">
+                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">🔧 Supervisor's Field Report</p>
+                                <p className="text-green-800 text-sm italic leading-relaxed">
+                                    "{complaint.resolution_report.proof_summary?.remarks || complaint.resolution_proof?.remarks || 'Work completed as per standard operating procedure.'}"
                                 </p>
                             </div>
-                            <div className="border-t border-green-200 pt-3">
-                                <p className="text-xs font-bold text-green-700 uppercase mb-1">Admin's Closing Note</p>
-                                <p className="text-green-900 font-medium">
-                                    "{complaint.resolution_report.final_remarks}"
+                            <div className="bg-white/70 rounded-xl p-4 border border-green-200">
+                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">✅ CiviCare Authority — Closing Note</p>
+                                <p className="text-green-900 font-medium text-sm leading-relaxed">
+                                    "{complaint.resolution_report.final_remarks || 'Complaint has been officially resolved and verified by CiviCare Municipal Authority.'}"
                                 </p>
                             </div>
                         </div>
-
-                        {/* Stamp */}
-                        <div className="absolute -bottom-4 -right-4 w-32 h-32 border-4 border-green-600 rounded-full flex items-center justify-center opacity-20 -rotate-12 pointer-events-none">
-                            <span className="text-green-600 font-black text-xl uppercase">Verified</span>
+                        {/* Verified Stamp */}
+                        <div className="absolute -bottom-4 -right-4 w-28 h-28 border-4 border-green-600 rounded-full flex items-center justify-center opacity-20 -rotate-12 pointer-events-none">
+                            <span className="text-green-600 font-black text-lg uppercase">Verified</span>
                         </div>
                     </div>
                 </motion.div>
             )}
+
 
             {/* Original Details (Collapsed/Secondary) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -480,80 +544,95 @@ const ComplaintDetail = () => {
                             </p>
                         </div>
 
+                        {/* Before & After Photo Uploads */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Evidence Type</label>
-                                <select
-                                    id="proof-type"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white"
-                                >
-                                    <option value="image">📸 Photo Evidence (Before/After)</option>
-                                    <option value="video">🎥 Video Walkthrough</option>
-                                    <option value="document">📄 Official Report (PDF)</option>
-                                </select>
+                            {/* BEFORE Photo */}
+                            <div className="border-2 border-dashed border-red-300 rounded-xl p-4 bg-red-50">
+                                <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    📷 Before Photo <span className="text-red-400">*</span>
+                                </p>
+                                <p className="text-xs text-red-400 mb-3">Upload a photo showing the issue BEFORE the work began</p>
+                                <input
+                                    type="file"
+                                    id="before-file"
+                                    accept="image/*"
+                                    className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-red-100 file:text-red-700 hover:file:bg-red-200"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+                                        const fd = new FormData();
+                                        fd.append('file', file);
+                                        try {
+                                            document.getElementById('before-status').innerText = "Uploading...";
+                                            const res = await axios.post('/api/upload', fd);
+                                            document.getElementById('before-url').value = res.data.url;
+                                            document.getElementById('before-status').innerText = "✅ Before photo uploaded";
+                                        } catch {
+                                            document.getElementById('before-status').innerText = "❌ Upload failed";
+                                        }
+                                    }}
+                                />
+                                <input type="hidden" id="before-url" />
+                                <p id="before-status" className="text-xs text-gray-500 mt-1">Select file to auto-upload</p>
                             </div>
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Evidence File</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="file"
-                                        id="proof-file"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                        onChange={async (e) => {
-                                            const file = e.target.files[0];
-                                            if (!file) return;
 
-                                            const formData = new FormData();
-                                            formData.append('file', file);
-
-                                            try {
-                                                const btn = document.getElementById('upload-btn-text');
-                                                if (btn) btn.innerText = "Uploading...";
-
-                                                const res = await axios.post('/api/upload', formData);
-
-                                                document.getElementById('proof-url').value = res.data.url;
-                                                if (btn) btn.innerText = "Upload Complete ✅";
-                                                alert("File Uploaded Successfully!");
-                                            } catch (err) {
-                                                console.error(err);
-                                                const btn = document.getElementById('upload-btn-text');
-                                                if (btn) btn.innerText = "Upload Failed ❌";
-                                                alert("Upload Failed");
-                                            }
-                                        }}
-                                    />
-                                </div>
+                            {/* AFTER Photo */}
+                            <div className="border-2 border-dashed border-green-300 rounded-xl p-4 bg-green-50">
+                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    📷 After Photo <span className="text-red-400">*</span>
+                                </p>
+                                <p className="text-xs text-green-500 mb-3">Upload a photo showing the resolved issue AFTER the work</p>
+                                <input
+                                    type="file"
+                                    id="proof-file"
+                                    accept="image/*"
+                                    className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+                                        const fd = new FormData();
+                                        fd.append('file', file);
+                                        try {
+                                            document.getElementById('upload-btn-text').innerText = "Uploading...";
+                                            const res = await axios.post('/api/upload', fd);
+                                            document.getElementById('proof-url').value = res.data.url;
+                                            document.getElementById('upload-btn-text').innerText = "✅ After photo uploaded";
+                                        } catch {
+                                            document.getElementById('upload-btn-text').innerText = "❌ Upload failed";
+                                        }
+                                    }}
+                                />
                                 <input type="hidden" id="proof-url" />
-                                <p id="upload-btn-text" className="text-xs text-gray-500 mt-1 pl-1">Select a file to auto-upload.</p>
+                                <p id="upload-btn-text" className="text-xs text-gray-500 mt-1">Select file to auto-upload</p>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Final Remarks</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Final Remarks <span className="text-red-400">*</span></label>
                             <textarea
                                 id="proof-remarks"
-                                placeholder="Describe the resolution technicalities and impact..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                placeholder="Describe what work was done, materials used, team involved, and outcome..."
+                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none"
                                 rows="3"
                             />
                         </div>
 
                         <Button
-                            className="w-full bg-green-600 hover:bg-green-700 text-gray-900 font-bold py-3 shadow-lg shadow-green-500/20"
+                            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 shadow-lg shadow-green-500/20"
                             onClick={async () => {
-                                const proofType = document.getElementById('proof-type').value;
                                 const proofUrl = document.getElementById('proof-url').value;
+                                const beforeUrl = document.getElementById('before-url').value;
                                 const remarks = document.getElementById('proof-remarks').value;
 
-                                if (!proofUrl || !remarks) return alert("Please provide both proof and remarks.");
+                                if (!proofUrl || !remarks) return alert("Please upload the After photo and provide remarks.");
 
                                 try {
                                     const token = localStorage.getItem('token');
                                     await axios.put(`/api/complaints/${id}`, {
                                         status: 'Pending Verification',
                                         resolution_proof: {
-                                            type: proofType,
+                                            type: 'image',
+                                            before_image_url: beforeUrl || null,
                                             image_url: proofUrl,
                                             remarks: remarks,
                                             submitted_by: user.username,
@@ -566,7 +645,7 @@ const ComplaintDetail = () => {
                                 } catch (err) { alert("Submission Failed"); }
                             }}
                         >
-                            Mark as Complete & Submit
+                            ✅ Mark as Complete &amp; Submit for Verification
                         </Button>
                     </div>
                 </div>
