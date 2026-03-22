@@ -8,5 +8,6 @@ pandas
 numpy
 python-dotenv
 Flask-Mail
+requests
 gunicorn
 certifi
