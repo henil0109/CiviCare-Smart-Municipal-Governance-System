@@ -11,4 +11,3 @@ Flask-Mail
 resend
 gunicorn
 certifi
-werkzeug

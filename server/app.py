@@ -79,6 +79,11 @@ def send_email_async(to_email, subject, html_body):
     t = threading.Thread(target=_send, daemon=True)
     t.start()
 
+# Upload Config
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 # Database Setup
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000, tlsCAFile=certifi.where())
