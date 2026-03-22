@@ -262,7 +262,7 @@ const ComplaintDetail = () => {
                             <div className="h-px w-16 bg-green-200" />
                         </div>
                         <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 font-serif">
-                            ✅ Issue Resolved
+                            Issue Resolved
                         </h2>
                         <p className="text-base text-gray-600 max-w-xl mx-auto">
                             This complaint has been officially resolved and verified by <strong>CiviCare Municipal Authority</strong>.
@@ -319,7 +319,7 @@ const ComplaintDetail = () => {
                                     )}
                                     {complaint.supervisor_details?.phone && (
                                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">
-                                            📞 {complaint.supervisor_details.phone}
+                                            {complaint.supervisor_details.phone}
                                         </span>
                                     )}
                                 </div>
@@ -360,13 +360,13 @@ const ComplaintDetail = () => {
                         </h3>
                         <div className="space-y-4">
                             <div className="bg-white/70 rounded-xl p-4 border border-green-200">
-                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">🔧 Supervisor's Field Report</p>
+                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">Supervisor's Field Report</p>
                                 <p className="text-green-800 text-sm italic leading-relaxed">
                                     "{complaint.resolution_report.proof_summary?.remarks || complaint.resolution_proof?.remarks || 'Work completed as per standard operating procedure.'}"
                                 </p>
                             </div>
                             <div className="bg-white/70 rounded-xl p-4 border border-green-200">
-                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">✅ CiviCare Authority — Closing Note</p>
+                                <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">CiviCare Authority — Closing Note</p>
                                 <p className="text-green-900 font-medium text-sm leading-relaxed">
                                     "{complaint.resolution_report.final_remarks || 'Complaint has been officially resolved and verified by CiviCare Municipal Authority.'}"
                                 </p>
@@ -549,7 +549,7 @@ const ComplaintDetail = () => {
                             {/* BEFORE Photo */}
                             <div className="border-2 border-dashed border-red-300 rounded-xl p-4 bg-red-50">
                                 <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2 flex items-center gap-1">
-                                    📷 Before Photo <span className="text-red-400">*</span>
+                                    Before Photo <span className="text-red-400">*</span>
                                 </p>
                                 <p className="text-xs text-red-400 mb-3">Upload a photo showing the issue BEFORE the work began</p>
                                 <input
@@ -566,9 +566,9 @@ const ComplaintDetail = () => {
                                             document.getElementById('before-status').innerText = "Uploading...";
                                             const res = await axios.post('/api/upload', fd);
                                             document.getElementById('before-url').value = res.data.url;
-                                            document.getElementById('before-status').innerText = "✅ Before photo uploaded";
+                                            document.getElementById('before-status').innerText = "Before photo uploaded";
                                         } catch {
-                                            document.getElementById('before-status').innerText = "❌ Upload failed";
+                                            document.getElementById('before-status').innerText = "Upload failed";
                                         }
                                     }}
                                 />
@@ -579,7 +579,7 @@ const ComplaintDetail = () => {
                             {/* AFTER Photo */}
                             <div className="border-2 border-dashed border-green-300 rounded-xl p-4 bg-green-50">
                                 <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2 flex items-center gap-1">
-                                    📷 After Photo <span className="text-red-400">*</span>
+                                    After Photo <span className="text-red-400">*</span>
                                 </p>
                                 <p className="text-xs text-green-500 mb-3">Upload a photo showing the resolved issue AFTER the work</p>
                                 <input
@@ -596,9 +596,9 @@ const ComplaintDetail = () => {
                                             document.getElementById('upload-btn-text').innerText = "Uploading...";
                                             const res = await axios.post('/api/upload', fd);
                                             document.getElementById('proof-url').value = res.data.url;
-                                            document.getElementById('upload-btn-text').innerText = "✅ After photo uploaded";
+                                            document.getElementById('upload-btn-text').innerText = "After photo uploaded";
                                         } catch {
-                                            document.getElementById('upload-btn-text').innerText = "❌ Upload failed";
+                                            document.getElementById('upload-btn-text').innerText = "Upload failed";
                                         }
                                     }}
                                 />
@@ -645,7 +645,7 @@ const ComplaintDetail = () => {
                                 } catch (err) { alert("Submission Failed"); }
                             }}
                         >
-                            ✅ Mark as Complete &amp; Submit for Verification
+                            Mark as Complete &amp; Submit for Verification
                         </Button>
                     </div>
                 </div>
