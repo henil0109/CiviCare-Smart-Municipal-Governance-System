@@ -527,6 +527,66 @@ CHATBOT_INFO = {
 }
 
 def chatbot_response(message, history=None, user=None):
-    # (Simple passthrough or maintenance of the original complex bot logic)
-    # Keeping it simple for now as the core request is Impact Analysis enhancement
-    return {"reply": "I am CiviBot. My logic is currently being upgraded for better impact analysis.", "quick_replies": ["Main Menu"]}
+    """
+    Intelligent rule-based chatbot for CiviCare.
+    Parses user input to provide relevant guidance.
+    """
+    msg_lower = message.lower()
+    reply = ""
+    quick_replies = []
+    action = None
+    
+    # Check for Greetings
+    if any(word in msg_lower for word in ["hello", "hi", "hey", "start"]):
+        user_name = user.get("username", "Citizen") if user else "Citizen"
+        reply = f"Hello, {user_name}! I'm CiviBot, your smart municipal assistant. How can I help you today?"
+        quick_replies = ["Report an Issue", "Emergency Contacts", "Know Categories"]
+        
+    # Check for Emergency
+    elif any(word in msg_lower for word in ["emergency", "fire", "accident", "urgent", "help", "danger"]):
+        reply = f"🚨 **If this is a life-threatening emergency, please call {CHATBOT_INFO['emergency_number']} immediately.** For urgent municipal issues (like major utility failures or structural collapses), please use the 'Report Complaint' page and select Fire Safety & Emergency."
+        quick_replies = ["Report an Issue", "Main Menu"]
+        action = "NAVIGATE_COMPLAINT"
+        
+    # Check for Reporting an Issue
+    elif any(word in msg_lower for word in ["report", "complaint", "issue", "problem", "broken", "fix"]):
+        reply = "I can guide you! To report a problem, go to the 'Report Complaint' section. You'll need to select a category, describe the issue, and provide a photo if possible. Our AI will automatically analyze it for priority and assign a team."
+        quick_replies = ["What categories?", "How long does it take?", "Main Menu"]
+        action = "NAVIGATE_COMPLAINT"
+        
+    # Check for Categories
+    elif any(word in msg_lower for word in ["categories", "types", "what can i report", "category"]):
+        reply = "CiviCare handles 12 primary categories, including:\n- Roads & Infrastructure\n- Water Supply & Plumbing\n- Electricity & Street Lighting\n- Sanitation & Waste Management\n- Traffic & Road Safety\n...and more!"
+        quick_replies = ["Report an Issue", "Main Menu"]
+        
+    # Check for Resolution Time / Tracking
+    elif any(word in msg_lower for word in ["track", "status", "time", "how long", "wait"]):
+        reply = "You can track the live status of your issues in the 'Dashboard' or 'My Complaints'. Resolution time depends on the AI-assigned severity (High, Medium, Low) and the complexity of the task."
+        quick_replies = ["Go to Dashboard", "Main Menu"]
+        action = "NAVIGATE_DASHBOARD"
+        
+    # Check for Contact Info
+    elif any(word in msg_lower for word in ["contact", "phone", "call", "email", "office", "address"]):
+        reply = f"🏢 **{CHATBOT_INFO['municipality']}**\n📍 {CHATBOT_INFO['address']}\n📞 {CHATBOT_INFO['phone']} (Toll Free: {CHATBOT_INFO['toll_free']})\n✉️ {CHATBOT_INFO['email']}\n🕒 {CHATBOT_INFO['office_hours']}"
+        quick_replies = ["Main Menu"]
+        
+    # Check for About/Tech
+    elif any(word in msg_lower for word in ["about", "what is civicare", "who are you", "tech"]):
+        reply = f"I am powered by {CHATBOT_INFO['version']}! The platform uses a smart AI Engine to categorize issues, estimate repair costs, evaluate risks, and dispatch municipal teams efficiently."
+        quick_replies = ["Main Menu"]
+        
+    # Feedback / Thanks
+    elif any(word in msg_lower for word in ["thank", "thanks", "good", "great", "ok"]):
+        reply = "You're very welcome! Stay safe and have a great day. Let me know if you need anything else."
+        quick_replies = ["Main Menu"]
+        
+    # Default fallback
+    else:
+        reply = "I'm sorry, I didn't quite catch that. I am currently trained to help you report issues, find emergency contacts, and learn about municipal services."
+        quick_replies = ["Report an Issue", "Contact Us", "Emergency Contacts"]
+        
+    return {
+        "reply": reply,
+        "quick_replies": quick_replies,
+        "action": action
+    }
