@@ -410,12 +410,12 @@ const ComplaintDetail = () => {
                                 )}
                                 <div>
                                     <p className="text-gray-900 font-medium italic mb-2">"{complaint.resolution_proof.remarks}"</p>
-                                    <div className="text-xs bg-slate-800 p-2 rounded-lg border border-gray-200 inline-block">
+                                    <div className="text-xs bg-white border border-blue-200 p-3 rounded-lg inline-block shadow-sm">
                                         <p>
-                                            <span className="font-bold text-gray-700">Executed By:</span> <br />
-                                            <span className="text-gray-900 font-mono text-sm">{complaint.supervisor_details?.username || complaint.resolution_proof.submitted_by}</span>
+                                            <span className="font-bold text-blue-700">Executed By:</span> <br />
+                                            <span className="text-gray-900 font-semibold text-sm">{complaint.supervisor_details?.username || complaint.resolution_proof.submitted_by}</span>
                                         </p>
-                                        <p className="mt-1 text-gray-600">{complaint.resolution_proof.submitted_at ? new Date(complaint.resolution_proof.submitted_at).toLocaleString() : 'Just now'}</p>
+                                        <p className="mt-1 text-gray-500">{complaint.resolution_proof.submitted_at ? new Date(complaint.resolution_proof.submitted_at).toLocaleString() : 'Just now'}</p>
                                     </div>
                                 </div>
                             </div>
