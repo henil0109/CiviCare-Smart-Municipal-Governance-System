@@ -36,12 +36,11 @@ from ai_module import (
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask_mail import Mail, Message
+import resend
 
 app = Flask(__name__)
-# CORS: use CORS_ORIGINS env var for explicit control, or CLIENT_URL, or allow all (*)
-# This is separate from CLIENT_URL which is only used for building email links
-_cors_origins = os.environ.get('CORS_ORIGINS', os.environ.get('CLIENT_URL', '*'))
+# CORS: allow all origins by default (separate from CLIENT_URL which is only for email links)
+_cors_origins = os.environ.get('CORS_ORIGINS', '*')
 CORS(app, origins=_cors_origins, supports_credentials=True)
 app.json_encoder = JSONEncoder
 
@@ -49,24 +48,36 @@ app.json_encoder = JSONEncoder
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey_civicare_2025')
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/civicare_db')
 
-# Email Config
-# NOTE: Port 587 (STARTTLS) is used because Render blocks outbound port 465 (SSL).
-# Strip spaces from app password (Gmail shows it with spaces, SMTP needs no spaces).
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '').replace(' ', '')
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
-app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False') == 'True'
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME', ''))
-app.config['MAIL_SUPPRESS_SEND'] = False  # Always send emails (not suppressed)
+# Resend API Key (set RESEND_API_KEY in Render environment variables)
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+else:
+    print("WARNING: RESEND_API_KEY is not set — emails will not be sent!")
 
-# Upload Config
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Email sender address
+# On Resend free tier without a custom domain, use: onboarding@resend.dev
+# With a verified domain, use your own address.
+EMAIL_FROM = os.environ.get('EMAIL_FROM', 'CiviCare <onboarding@resend.dev>')
 
-mail = Mail(app)
+def send_email_async(to_email, subject, html_body):
+    """Send an email via Resend API in a background thread (never blocks the HTTP response)."""
+    def _send():
+        if not RESEND_API_KEY:
+            print(f"SKIP email to {to_email}: RESEND_API_KEY not configured")
+            return
+        try:
+            resend.Emails.send({
+                "from": EMAIL_FROM,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_body,
+            })
+            print(f"Email sent via Resend to {to_email} — subject: {subject}")
+        except Exception as e:
+            print(f"ERROR sending email via Resend to {to_email}: {type(e).__name__}: {e}")
+    t = threading.Thread(target=_send, daemon=True)
+    t.start()
 
 # Database Setup
 try:
@@ -159,37 +170,26 @@ def register():
     except pymongo.errors.DuplicateKeyError:
         return jsonify({"message": "User already exists"}), 400
     
-    # SEND VERIFICATION EMAIL (in background thread so it never blocks/times-out the HTTP response)
-    base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
-    if not base_url:
-        print("WARNING: CLIENT_URL env var is not set! Verification link will point to localhost.")
-        base_url = "http://localhost:5173"
+    # Build verification link
+    base_url = os.environ.get('CLIENT_URL', 'http://localhost:5173').rstrip('/')
     link = f"{base_url}/verify?token={token}"
 
-    def send_verification_email(app_ctx, recipient, verification_link):
-        with app_ctx:
-            try:
-                msg = Message("Verify your CiviCare Account", recipients=[recipient])
-                msg.body = f"Welcome to CiviCare!\n\nClick below to verify your account:\n{verification_link}\n\nIf you didn't request this, ignore this email."
-                msg.html = f"""
-                <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
-                  <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
-                  <p>Welcome! Click the button below to verify your email:</p>
-                  <a href="{verification_link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
-                    Verify Email
-                  </a>
-                  <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
-                  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
-                  <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
-                </div>"""
-                mail.send(msg)
-                print(f"Verification email sent to {recipient} — link: {verification_link}")
-            except Exception as e:
-                print(f"ERROR sending verification email to {recipient}: {type(e).__name__}: {e}")
-
-    t = threading.Thread(target=send_verification_email, args=(app.app_context(), data['email'], link))
-    t.daemon = True
-    t.start()
+    # Send verification email asynchronously via Resend (never blocks response)
+    send_email_async(
+        to_email=data['email'],
+        subject="Verify your CiviCare Account",
+        html_body=f"""
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
+          <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
+          <p>Welcome, <strong>{data['username']}</strong>! Click below to verify your email:</p>
+          <a href="{link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
+            Verify Email
+          </a>
+          <p style="color:#6b7280;font-size:13px">If you did not create an account, ignore this email.</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
+          <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
+        </div>"""
+    )
     
     # Notify Admins of New Citizen
     if data.get('role', 'citizen') == 'citizen':
@@ -245,36 +245,25 @@ def resend_verification():
             {"$set": {"verification_token": token}}
         )
     
-    # Send resend email in a background thread so it never causes a timeout
-    base_url = os.environ.get('CLIENT_URL', '').rstrip('/')
-    if not base_url:
-        base_url = "http://localhost:5173"
+    # Build link and send via Resend (async, never blocks)
+    base_url = os.environ.get('CLIENT_URL', 'http://localhost:5173').rstrip('/')
     link = f"{base_url}/verify?token={token}"
 
-    def send_resend_email(app_ctx, recipient, verification_link):
-        with app_ctx:
-            try:
-                msg = Message("Verify your CiviCare Account", recipients=[recipient])
-                msg.body = f"Welcome to CiviCare!\n\nClick below to verify your account:\n{verification_link}\n\nIf you didn't request this, ignore this email."
-                msg.html = f"""
-                <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
-                  <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
-                  <p>Please click the button below to verify your email:</p>
-                  <a href="{verification_link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
-                    Verify Email
-                  </a>
-                  <p style="color:#6b7280;font-size:13px">If you did not create an account, you can safely ignore this email.</p>
-                  <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
-                  <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
-                </div>"""
-                mail.send(msg)
-                print(f"Resend verification email sent to {recipient}")
-            except Exception as e:
-                print(f"ERROR resending email to {recipient}: {type(e).__name__}: {e}")
-
-    t = threading.Thread(target=send_resend_email, args=(app.app_context(), email, link))
-    t.daemon = True
-    t.start()
+    send_email_async(
+        to_email=email,
+        subject="Verify your CiviCare Account",
+        html_body=f"""
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;background:#f9fafb;border-radius:12px">
+          <h2 style="color:#1e40af">Verify Your CiviCare Account</h2>
+          <p>Click the button below to verify your email address:</p>
+          <a href="{link}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">
+            Verify Email
+          </a>
+          <p style="color:#6b7280;font-size:13px">If you did not create an account, ignore this email.</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
+          <p style="color:#9ca3af;font-size:12px">— The CiviCare Team</p>
+        </div>"""
+    )
     return jsonify({"message": "Verification email resent! Please check your inbox (and spam folder)."})
 
 # --- Forgot / Reset Password ---
