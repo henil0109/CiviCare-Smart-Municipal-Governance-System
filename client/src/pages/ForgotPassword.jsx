@@ -29,11 +29,11 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-outfit">
             {/* Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2" />
             </div>
 
             <motion.div
@@ -41,10 +41,10 @@ const ForgotPassword = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="relative z-10 w-full max-w-md"
             >
-                <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-10">
+                <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 p-10">
                     {/* Icon */}
-                    <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-1 ring-blue-500/30">
-                        <Mail className="text-blue-400" size={32} />
+                    <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-1 ring-blue-100 shadow-sm">
+                        <Mail className="text-blue-600" size={32} />
                     </div>
 
                     {success ? (
@@ -53,15 +53,15 @@ const ForgotPassword = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             className="text-center"
                         >
-                            <CheckCircle className="text-green-400 mx-auto mb-4" size={48} />
-                            <h2 className="text-2xl font-bold text-white mb-3">Check Your Email</h2>
-                            <p className="text-slate-400 mb-2">
-                                If <span className="text-blue-400 font-medium">{email}</span> is registered, we've sent a password reset link.
+                            <CheckCircle className="text-emerald-500 mx-auto mb-4" size={48} />
+                            <h2 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Check Your Email</h2>
+                            <p className="text-slate-500 mb-2">
+                                If <span className="text-blue-600 font-bold">{email}</span> is registered, we've sent a password reset link.
                             </p>
-                            <p className="text-slate-500 text-sm mb-8">The link expires in 1 hour. Check your spam folder if you don't see it.</p>
+                            <p className="text-slate-400 text-sm mb-8">The link expires in 1 hour. Check your spam folder if you don't see it.</p>
                             <Link
                                 to="/login"
-                                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold transition-colors"
                             >
                                 <ArrowLeft size={18} /> Back to Login
                             </Link>
@@ -69,28 +69,28 @@ const ForgotPassword = () => {
                     ) : (
                         <>
                             <div className="text-center mb-8">
-                                <h2 className="text-2xl font-bold text-white mb-2">Forgot Password?</h2>
-                                <p className="text-slate-400 text-sm">Enter your email address and we'll send you a reset link.</p>
+                                <h2 className="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Forgot Password?</h2>
+                                <p className="text-slate-500 text-sm">Enter your email address and we'll send you a reset link.</p>
                             </div>
 
                             {error && (
-                                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-                                    <AlertCircle size={16} className="shrink-0" />
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2 font-medium">
+                                    <AlertCircle size={18} className="shrink-0" />
                                     {error}
                                 </div>
                             )}
 
-                            <form onSubmit={handleSubmit} className="space-y-5">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address</label>
                                     <div className="relative">
-                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                         <input
                                             type="email"
                                             value={email}
                                             onChange={(e) => { setEmail(e.target.value); setError(''); }}
                                             placeholder="name@example.com"
-                                            className="w-full bg-slate-800 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                            className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                                             required
                                             autoFocus
                                         />
@@ -100,7 +100,7 @@ const ForgotPassword = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:from-blue-500 hover:to-indigo-500 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-[0_8px_20px_rgba(37,99,235,0.2)] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -113,7 +113,7 @@ const ForgotPassword = () => {
                             <div className="mt-8 text-center">
                                 <Link
                                     to="/login"
-                                    className="inline-flex items-center gap-1.5 text-slate-400 hover:text-blue-400 text-sm font-medium transition-colors"
+                                    className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 font-bold transition-colors"
                                 >
                                     <ArrowLeft size={16} /> Back to Login
                                 </Link>

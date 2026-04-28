@@ -56,7 +56,7 @@ const ProtectedRoute = ({ children, roleRequired }) => {
 // Layout for Public/User pages that includes Navbar
 const PublicLayout = ({ user, setUser }) => {
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 pt-24">
+        <div className="min-h-screen bg-slate-50 text-slate-800 pt-24 font-outfit selection:bg-blue-100 selection:text-blue-900">
             <Navbar user={user} setUser={setUser} />
             <Outlet />
         </div>

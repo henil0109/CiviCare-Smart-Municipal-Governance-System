@@ -26,8 +26,8 @@ const ResetPassword = () => {
     };
     const passScore = Object.values(checks).filter(Boolean).length;
     const strengthLabel = ['', 'Weak', 'Fair', 'Good', 'Strong'][passScore];
-    const strengthColor = ['', 'text-red-500', 'text-yellow-400', 'text-blue-400', 'text-green-400'][passScore];
-    const barColor = ['', 'bg-red-500', 'bg-yellow-400', 'bg-blue-500', 'bg-green-500'][passScore];
+    const strengthColor = ['', 'text-red-500', 'text-amber-500', 'text-blue-500', 'text-emerald-600'][passScore];
+    const barColor = ['', 'bg-red-500', 'bg-amber-400', 'bg-blue-500', 'bg-emerald-500'][passScore];
 
     useEffect(() => {
         if (!token) {
@@ -62,11 +62,11 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-outfit">
             {/* Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2" />
             </div>
 
             <motion.div
@@ -74,9 +74,9 @@ const ResetPassword = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="relative z-10 w-full max-w-md"
             >
-                <div className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-10">
-                    <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-1 ring-blue-500/30">
-                        <KeyRound className="text-blue-400" size={32} />
+                <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 p-10">
+                    <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-1 ring-blue-100 shadow-sm">
+                        <KeyRound className="text-blue-600" size={32} />
                     </div>
 
                     {success ? (
@@ -85,13 +85,13 @@ const ResetPassword = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             className="text-center"
                         >
-                            <ShieldCheck className="text-green-400 mx-auto mb-4" size={56} />
-                            <h2 className="text-2xl font-bold text-white mb-3">Password Reset!</h2>
-                            <p className="text-slate-400 mb-2">Your password has been updated successfully.</p>
-                            <p className="text-slate-500 text-sm mb-6">Redirecting you to login in a moment…</p>
+                            <ShieldCheck className="text-emerald-500 mx-auto mb-4" size={56} />
+                            <h2 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Password Reset!</h2>
+                            <p className="text-slate-500 mb-2 font-medium">Your password has been updated successfully.</p>
+                            <p className="text-slate-400 text-sm mb-6">Redirecting you to login in a moment…</p>
                             <Link
                                 to="/login"
-                                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-colors"
+                                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgba(37,99,235,0.2)]"
                             >
                                 Go to Login
                             </Link>
@@ -99,45 +99,45 @@ const ResetPassword = () => {
                     ) : (
                         <>
                             <div className="text-center mb-8">
-                                <h2 className="text-2xl font-bold text-white mb-2">Set New Password</h2>
-                                <p className="text-slate-400 text-sm">Choose a strong password for your account.</p>
+                                <h2 className="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Set New Password</h2>
+                                <p className="text-slate-500 text-sm">Choose a strong password for your account.</p>
                             </div>
 
                             {error && (
-                                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-                                    <AlertCircle size={16} className="shrink-0" />
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2 font-medium">
+                                    <AlertCircle size={18} className="shrink-0" />
                                     {error}
                                 </div>
                             )}
 
-                            <form onSubmit={handleSubmit} className="space-y-5">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* New Password */}
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">New Password</label>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">New Password</label>
                                     <div className="relative">
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             value={password}
                                             onChange={(e) => { setPassword(e.target.value); setError(''); }}
                                             placeholder="Min. 8 characters"
-                                            className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                                             required
                                         />
                                         <button type="button" onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
                                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                         </button>
                                     </div>
 
                                     {/* Strength Meter */}
                                     {password && (
-                                        <div className="mt-2">
-                                            <div className="flex gap-1 h-1.5 mb-1.5">
+                                        <div className="mt-3">
+                                            <div className="flex gap-1 h-1.5 mb-2">
                                                 {[...Array(4)].map((_, i) => (
-                                                    <div key={i} className={`h-full flex-1 rounded-full transition-all duration-300 ${i < passScore ? barColor : 'bg-slate-700'}`} />
+                                                    <div key={i} className={`h-full flex-1 rounded-full transition-all duration-300 ${i < passScore ? barColor : 'bg-slate-200'}`} />
                                                 ))}
                                             </div>
-                                            <p className={`text-xs font-semibold mb-2 ${strengthColor}`}>{strengthLabel}</p>
+                                            <p className={`text-xs font-bold mb-2 ${strengthColor}`}>{strengthLabel}</p>
                                             <ul className="space-y-1">
                                                 {[
                                                     { label: 'At least 8 characters', met: checks.length },
@@ -145,8 +145,8 @@ const ResetPassword = () => {
                                                     { label: 'One number (0–9)', met: checks.number },
                                                     { label: 'One special character (!@#$…)', met: checks.special },
                                                 ].map(req => (
-                                                    <li key={req.label} className={`flex items-center gap-1.5 text-xs ${req.met ? 'text-green-400' : 'text-slate-500'}`}>
-                                                        <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${req.met ? 'bg-green-900 text-green-400' : 'bg-slate-700 text-slate-500'}`}>
+                                                    <li key={req.label} className={`flex items-center gap-1.5 text-xs font-medium ${req.met ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                                        <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${req.met ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                                                             {req.met ? '✓' : '·'}
                                                         </span>
                                                         {req.label}
@@ -159,23 +159,23 @@ const ResetPassword = () => {
 
                                 {/* Confirm Password */}
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password</label>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Confirm Password</label>
                                     <div className="relative">
                                         <input
                                             type={showConfirm ? 'text' : 'password'}
                                             value={confirmPassword}
                                             onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
                                             placeholder="Re-enter your password"
-                                            className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                                             required
                                         />
                                         <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
                                             {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                         </button>
                                     </div>
                                     {confirmPassword && (
-                                        <p className={`text-xs mt-1.5 font-medium ${password === confirmPassword ? 'text-green-400' : 'text-red-400'}`}>
+                                        <p className={`text-xs mt-2 font-bold ${password === confirmPassword ? 'text-emerald-600' : 'text-red-500'}`}>
                                             {password === confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
                                         </p>
                                     )}
@@ -184,7 +184,7 @@ const ResetPassword = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:from-blue-500 hover:to-indigo-500 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-[0_8px_20px_rgba(37,99,235,0.2)] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
                                 >
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -194,8 +194,8 @@ const ResetPassword = () => {
                                 </button>
                             </form>
 
-                            <div className="mt-6 text-center">
-                                <Link to="/login" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-blue-400 text-sm font-medium transition-colors">
+                            <div className="mt-8 text-center">
+                                <Link to="/login" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold transition-colors">
                                     <ArrowLeft size={16} /> Back to Login
                                 </Link>
                             </div>

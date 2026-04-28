@@ -75,7 +75,7 @@ const Navbar = ({ user, setUser }) => {
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 className={`pointer-events-auto rounded-full transition-all duration-500 ease-out ${scrolled
-                    ? 'bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-blue-900/20 border border-blue-500/30 py-3 px-6 w-full max-w-5xl'
+                    ? 'bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-200/50 py-3 px-6 w-full max-w-5xl'
                     : 'bg-transparent border border-transparent py-6 px-8 w-full max-w-7xl'
                     } flex items-center justify-between`}
             >
@@ -89,7 +89,7 @@ const Navbar = ({ user, setUser }) => {
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className={`hidden md:flex items-center gap-1 p-1 rounded-full transition-colors ${scrolled ? 'bg-slate-800/50 border border-slate-700' : 'bg-transparent'}`}>
+                <div className={`hidden md:flex items-center gap-1 p-1 rounded-full transition-colors ${scrolled ? 'bg-slate-50/80 border border-slate-200/50' : 'bg-transparent'}`}>
                     {[
                         { name: 'Home', path: '/' },
                         { name: 'About', path: '/about' },
@@ -100,8 +100,8 @@ const Navbar = ({ user, setUser }) => {
                             key={item.path}
                             to={item.path}
                             className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${isActive(item.path)
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/50'
                                 }`}
                         >
                             {item.name}
@@ -117,7 +117,7 @@ const Navbar = ({ user, setUser }) => {
                             <div className="relative">
                                 <button
                                     onClick={() => setIsNotifOpen(!isNotifOpen)}
-                                    className="relative p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                    className="relative p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                                 >
                                     <Bell size={20} />
                                     {unreadCount > 0 && (
@@ -131,21 +131,21 @@ const Navbar = ({ user, setUser }) => {
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 top-full mt-2 w-80 bg-slate-900 rounded-2xl shadow-2xl border border-white/10 overflow-hidden py-2 max-h-[400px] overflow-y-auto z-50"
+                                            className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 overflow-hidden py-2 max-h-[400px] overflow-y-auto z-50"
                                         >
-                                            <div className="px-4 py-2 border-b border-white/5 flex justify-between items-center">
-                                                <span className="font-bold text-white text-sm">Notifications</span>
-                                                <button onClick={() => setIsNotifOpen(false)} className="text-xs text-blue-400 hover:underline">Close</button>
+                                            <div className="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                                                <span className="font-bold text-slate-800 text-sm">Notifications</span>
+                                                <button onClick={() => setIsNotifOpen(false)} className="text-xs text-blue-600 hover:underline">Close</button>
                                             </div>
 
                                             {notifications.length === 0 ? (
                                                 <div className="p-6 text-center text-slate-500 text-sm">No new notifications</div>
                                             ) : (
-                                                <div className="divide-y divide-white/5">
+                                                <div className="divide-y divide-slate-50">
                                                     {notifications.map(n => (
                                                         <div
                                                             key={n._id}
-                                                            className={`p-3 text-sm hover:bg-slate-800 transition-colors cursor-pointer ${!n.read ? 'bg-blue-900/20' : ''}`}
+                                                            className={`p-3 text-sm hover:bg-slate-50 transition-colors cursor-pointer ${!n.read ? 'bg-blue-50/50' : ''}`}
                                                             onClick={async () => {
                                                                 if (!n.read) await handleMarkRead(n._id);
                                                                 // Extract ID if message contains it (basic logic)
@@ -154,11 +154,11 @@ const Navbar = ({ user, setUser }) => {
                                                             }}
                                                         >
                                                             <div className="flex justify-between items-start mb-1">
-                                                                <span className="font-bold text-slate-200">{n.title}</span>
+                                                                <span className="font-bold text-slate-800">{n.title}</span>
                                                                 {!n.read && <span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 status-dot"></span>}
                                                             </div>
-                                                            <p className="text-slate-400 text-xs mb-1 leading-relaxed">{n.message}</p>
-                                                            <div className="flex justify-between items-center text-[10px] text-slate-500">
+                                                            <p className="text-slate-600 text-xs mb-1 leading-relaxed">{n.message}</p>
+                                                            <div className="flex justify-between items-center text-[10px] text-slate-400">
                                                                 <span>{new Date(n.created_at).toLocaleDateString()}</span>
                                                                 {n.read && <Check size={12} className="text-emerald-500" />}
                                                             </div>
@@ -174,12 +174,12 @@ const Navbar = ({ user, setUser }) => {
                             <div className="relative">
                                 <button
                                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                    className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-slate-800 transition-all border border-transparent hover:border-white/10"
+                                    className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
                                 >
-                                    <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                    <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
                                         {user.username.charAt(0).toUpperCase()}
                                     </div>
-                                    <ChevronDown size={14} className={`text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+                                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
                                 </button>
 
                                 <AnimatePresence>
@@ -188,30 +188,30 @@ const Navbar = ({ user, setUser }) => {
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 top-full mt-2 w-56 bg-slate-900 rounded-2xl shadow-xl border border-white/10 overflow-hidden py-2"
+                                            className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 overflow-hidden py-2"
                                         >
-                                            <div className="px-4 py-3 border-b border-white/5 bg-slate-800/50">
-                                                <p className="text-sm font-bold text-white">{user.username}</p>
-                                                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                                            <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                                                <p className="text-sm font-bold text-slate-800">{user.username}</p>
+                                                <p className="text-xs text-slate-500 truncate">{user.email}</p>
                                             </div>
                                             <Link
                                                 to="/profile"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition-colors"
+                                                className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-colors"
                                             >
                                                 <User size={16} /> My Profile
                                             </Link>
                                             <Link
                                                 to="/dashboard"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition-colors"
+                                                className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-colors"
                                             >
                                                 <LayoutDashboard size={16} /> Dashboard
                                             </Link>
-                                            <div className="h-px bg-white/5 my-1"></div>
+                                            <div className="h-px bg-slate-100 my-1"></div>
                                             <button
                                                 onClick={handleLogout}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/20 flex items-center gap-2 transition-colors"
+                                                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
                                             >
                                                 <LogOut size={16} /> Logout
                                             </button>
