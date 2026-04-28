@@ -179,6 +179,7 @@ export default function ChatbotWidget({ user }) {
     const [unread, setUnread] = useState(0);
     const bottomRef = useRef(null);
     const inputRef = useRef(null);
+    const capsRef = useRef(null);
     const navigate = useNavigate();
 
     // Show preview bubble after 2s on first load
@@ -447,12 +448,13 @@ export default function ChatbotWidget({ user }) {
         /* Capability chips row */
         .civi-caps {
           background: rgba(0,0,0,0.25);
-          padding: 8px 16px;
+          padding: 8px 16px 12px;
           display: flex; gap: 6px; overflow-x: auto;
-          scrollbar-width: none;
           border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .civi-caps::-webkit-scrollbar { display: none; }
+        .civi-caps::-webkit-scrollbar { height: 4px; }
+        .civi-caps::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        .civi-caps::-webkit-scrollbar-track { background: transparent; }
         .civi-cap-pill {
           background: rgba(255,255,255,0.07);
           border: 1px solid rgba(255,255,255,0.1);
@@ -643,10 +645,18 @@ export default function ChatbotWidget({ user }) {
                                 </div>
 
                                 {/* Capability chips */}
-                                <div className="civi-caps">
+                                <div 
+                                    className="civi-caps" 
+                                    ref={capsRef}
+                                    onWheel={(e) => {
+                                        if (capsRef.current) {
+                                            capsRef.current.scrollLeft += e.deltaY;
+                                        }
+                                    }}
+                                >
                                     {['📋 Complaints', '🔍 Track Status', '🆘 Emergency', '📞 Contact', '❓ FAQ', '🏛️ Info'].map((c, i) => (
                                         <button key={i} className="civi-cap-pill"
-                                            onClick={() => sendToBot(c.substring(3))}>
+                                            onClick={() => sendToBot(c.split(' ').slice(1).join(' '))}>
                                             {c}
                                         </button>
                                     ))}

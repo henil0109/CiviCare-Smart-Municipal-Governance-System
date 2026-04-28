@@ -594,10 +594,15 @@ def chatbot_response(message, history=None, user=None):
         reply = f"🏢 **{CHATBOT_INFO['municipality']}**\n📍 {CHATBOT_INFO['address']}\n📞 {CHATBOT_INFO['phone']} (Toll Free: {CHATBOT_INFO['toll_free']})\n✉️ {CHATBOT_INFO['email']}\n🕒 {CHATBOT_INFO['office_hours']}"
         quick_replies = ["Main Menu"]
         
-    # Check for About/Tech
-    elif any(word in msg_lower for word in ["about", "what is civicare", "who are you", "tech"]):
+    # Check for About/Tech/Info
+    elif any(word in msg_lower for word in ["about", "what is civicare", "who are you", "tech", "info"]):
         reply = f"I am powered by {CHATBOT_INFO['version']}! The platform uses a smart AI Engine to categorize issues, estimate repair costs, evaluate risks, and dispatch municipal teams efficiently."
         quick_replies = ["Main Menu"]
+        
+    # Check for FAQ
+    elif any(word in msg_lower for word in ["faq", "frequently asked questions", "questions"]):
+        reply = "Here are some common FAQs:\n- **How do I report?** Click 'Report an Issue' and fill the form.\n- **Who fixes it?** The municipal teams are assigned automatically by my AI.\n- **How do I track?** Check your Dashboard for live updates.\n- **Is it free?** Yes, this service is completely free."
+        quick_replies = ["Report an Issue", "Main Menu"]
         
     # Feedback / Thanks
     elif any(word in msg_lower for word in ["thank", "thanks", "good", "great", "ok"]):
