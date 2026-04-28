@@ -537,10 +537,24 @@ def chatbot_response(message, history=None, user=None):
     action = None
     
     # Check for Greetings
-    if any(word in msg_lower for word in ["hello", "hi", "hey", "start"]):
+    if any(word in msg_lower for word in ["hello", "hi", "hey", "start", "greetings"]):
         user_name = user.get("username", "Citizen") if user else "Citizen"
-        reply = f"Hello, {user_name}! I'm CiviBot, your smart municipal assistant. How can I help you today?"
-        quick_replies = ["Report an Issue", "Emergency Contacts", "Know Categories"]
+        if user:
+            reply = f"Hello, {user_name}! Welcome back. I'm CiviBot, your smart municipal assistant. How can I help you today?"
+            quick_replies = ["Report an Issue", "Track Status", "Emergency Contacts"]
+        else:
+            reply = f"Hello, {user_name}! I'm CiviBot, your smart municipal assistant. How can I help you today? You can log in to access personalized services."
+            quick_replies = ["🔐 Login", "📝 Register", "Report an Issue", "Emergency Contacts"]
+            
+    # Check for Login / Register
+    elif any(word in msg_lower for word in ["login", "sign in", "register", "sign up", "create account", "account"]):
+        if user:
+            reply = f"You are already logged in as {user.get('username')}! You have full access to report issues and track them."
+            quick_replies = ["Report an Issue", "Track Status", "Main Menu"]
+        else:
+            reply = "You need to log in or register a free account to report complaints, track their live status, and communicate directly with municipal teams."
+            quick_replies = ["🔐 Login", "📝 Register", "Main Menu"]
+            action = "redirect_login"
         
     # Check for Emergency
     elif any(word in msg_lower for word in ["emergency", "fire", "accident", "urgent", "help", "danger"]):
@@ -550,9 +564,14 @@ def chatbot_response(message, history=None, user=None):
         
     # Check for Reporting an Issue
     elif any(word in msg_lower for word in ["report", "complaint", "issue", "problem", "broken", "fix"]):
-        reply = "I can guide you! To report a problem, go to the 'Report Complaint' section. You'll need to select a category, describe the issue, and provide a photo if possible. Our AI will automatically analyze it for priority and assign a team."
-        quick_replies = ["What categories?", "How long does it take?", "Main Menu"]
-        action = "NAVIGATE_COMPLAINT"
+        if not user:
+            reply = "To report a problem, you need to have a registered account. Please log in or register first."
+            quick_replies = ["🔐 Login", "📝 Register", "What categories?"]
+            action = "redirect_login"
+        else:
+            reply = "I can guide you! To report a problem, go to the 'Report Complaint' section. You'll need to select a category, describe the issue, and provide a photo if possible. Our AI will automatically analyze it for priority and assign a team."
+            quick_replies = ["What categories?", "How long does it take?", "Main Menu"]
+            action = "NAVIGATE_COMPLAINT"
         
     # Check for Categories
     elif any(word in msg_lower for word in ["categories", "types", "what can i report", "category"]):
@@ -560,10 +579,15 @@ def chatbot_response(message, history=None, user=None):
         quick_replies = ["Report an Issue", "Main Menu"]
         
     # Check for Resolution Time / Tracking
-    elif any(word in msg_lower for word in ["track", "status", "time", "how long", "wait"]):
-        reply = "You can track the live status of your issues in the 'Dashboard' or 'My Complaints'. Resolution time depends on the AI-assigned severity (High, Medium, Low) and the complexity of the task."
-        quick_replies = ["Go to Dashboard", "Main Menu"]
-        action = "NAVIGATE_DASHBOARD"
+    elif any(word in msg_lower for word in ["track", "status", "time", "how long", "wait", "my complaints"]):
+        if not user:
+            reply = "To track the status of your complaints, you must be logged into your account."
+            quick_replies = ["🔐 Login", "📝 Register", "Main Menu"]
+            action = "redirect_login"
+        else:
+            reply = "You can track the live status of your issues in the 'Dashboard' or 'My Complaints'. Resolution time depends on the AI-assigned severity (High, Medium, Low) and the complexity of the task."
+            quick_replies = ["Go to Dashboard", "Main Menu"]
+            action = "NAVIGATE_DASHBOARD"
         
     # Check for Contact Info
     elif any(word in msg_lower for word in ["contact", "phone", "call", "email", "office", "address"]):
