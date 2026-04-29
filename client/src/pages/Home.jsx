@@ -214,13 +214,7 @@ const Home = ({ user }) => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm mb-6 border border-blue-200 shadow-sm">
-                            <span className="relative flex h-2.5 w-2.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
-                            </span>
-                            v2.0 E-Governance System Live
-                        </div>
+
 
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 text-slate-900 leading-[1.1]">
                             Smart Governance. <br />
@@ -297,50 +291,61 @@ const Home = ({ user }) => {
                 </motion.div>
             </div>
 
-            {/* HOW IT WORKS: PROCEDURE SLIDER (SCROLLER) */}
-            <div className="py-32 bg-slate-900 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none" />
-                
+            {/* HOW IT WORKS: VERTICAL TIMELINE */}
+            <div className="py-32 bg-white relative overflow-hidden border-t border-slate-100">
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                        <div className="max-w-2xl">
-                            <h2 className="text-blue-400 font-bold tracking-widest uppercase text-sm mb-3 flex items-center gap-2">
-                                <Zap size={16} /> The Procedure
-                            </h2>
-                            <h3 className="text-4xl md:text-5xl font-extrabold text-white mb-6">Seamless Execution.</h3>
-                            <p className="text-xl text-slate-400 font-light">
-                                A frictionless four-step journey from reporting an issue to community-verified resolution.
-                            </p>
-                        </div>
+                    <div className="text-center max-w-3xl mx-auto mb-20">
+                        <h2 className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3 flex items-center justify-center gap-2">
+                            <Zap size={16} /> Official Procedure
+                        </h2>
+                        <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">Transparent. Efficient. Verified.</h3>
+                        <p className="text-xl text-slate-500 font-light">
+                            A standardized four-step protocol ensuring every citizen's report is handled with accountability and precision.
+                        </p>
                     </div>
 
-                    {/* Horizontal Scroll Snap Container */}
-                    <div className="flex overflow-x-auto pb-10 hide-scrollbar snap-x snap-mandatory gap-6 -mx-4 px-4 sm:mx-0 sm:px-0">
-                        {procedures.map((proc, index) => (
-                            <motion.div
-                                key={proc.id}
-                                initial={{ opacity: 0, x: 50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1, duration: 0.5 }}
-                                viewport={{ once: true, margin: "-50px" }}
-                                className="min-w-[85vw] sm:min-w-[350px] flex-1 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 p-10 rounded-3xl snap-center relative overflow-hidden group hover:bg-slate-800 transition-colors"
-                            >
-                                {/* Step Number Watermark */}
-                                <div className="absolute -top-6 -right-6 text-9xl font-extrabold text-slate-700/20 group-hover:text-blue-500/10 transition-colors pointer-events-none">
-                                    0{proc.id}
-                                </div>
+                    <div className="max-w-4xl mx-auto relative">
+                        {/* Connecting Line */}
+                        <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-100 via-indigo-100 to-transparent -translate-x-1/2 rounded-full" />
+                        
+                        <div className="space-y-16 md:space-y-24 relative">
+                            {procedures.map((proc, index) => {
+                                const isEven = index % 2 === 0;
+                                return (
+                                    <motion.div
+                                        key={proc.id}
+                                        initial={{ opacity: 0, y: 50 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-100px" }}
+                                        transition={{ duration: 0.6 }}
+                                        className={`flex flex-col md:flex-row items-center gap-8 ${isEven ? 'md:flex-row-reverse' : ''}`}
+                                    >
+                                        {/* Content Box */}
+                                        <div className={`flex-1 w-full pl-20 md:pl-0 ${isEven ? 'md:text-left md:pl-16' : 'md:text-right md:pr-16'}`}>
+                                            <div className="bg-slate-50 border border-slate-100 p-8 rounded-3xl hover:bg-white hover:shadow-xl transition-all duration-300 relative group">
+                                                <div className={`absolute top-0 ${isEven ? 'left-0 rounded-tl-3xl rounded-br-3xl' : 'right-0 rounded-tr-3xl rounded-bl-3xl'} bg-${proc.color}-100 text-${proc.color}-600 font-bold px-4 py-2 text-sm`}>
+                                                    Step 0{proc.id}
+                                                </div>
+                                                <h4 className="text-2xl font-bold text-slate-800 mb-4 mt-4">{proc.title}</h4>
+                                                <p className="text-slate-500 text-lg leading-relaxed">
+                                                    {proc.desc}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                <div className={`w-16 h-16 bg-${proc.color}-500/20 text-${proc.color}-400 rounded-2xl flex items-center justify-center mb-8 shadow-inner border border-${proc.color}-500/30 group-hover:scale-110 transition-transform duration-500`}>
-                                    <proc.icon size={32} />
-                                </div>
-                                
-                                <h4 className="text-2xl font-bold text-white mb-4 relative z-10">{proc.title}</h4>
-                                <p className="text-slate-400 text-lg leading-relaxed relative z-10">
-                                    {proc.desc}
-                                </p>
-                            </motion.div>
-                        ))}
+                                        {/* Center Icon */}
+                                        <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-16 h-16 bg-white rounded-full border-4 border-slate-50 flex items-center justify-center shadow-lg z-10">
+                                            <div className={`w-10 h-10 bg-${proc.color}-50 text-${proc.color}-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                                <proc.icon size={20} />
+                                            </div>
+                                        </div>
+
+                                        {/* Empty spacer for flex alignment */}
+                                        <div className="hidden md:block flex-1 w-1/2" />
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
