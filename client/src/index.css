@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,7 +11,15 @@
     }
 
     body {
-        background-color: #F8FAFC; /* slate-50 */
+        /* Stunning light mesh gradient background */
+        background-color: #edf2f8;
+        background-image: 
+            radial-gradient(at 0% 0%, hsla(225, 100%, 90%, 1) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, hsla(200, 100%, 88%, 1) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, hsla(250, 100%, 93%, 1) 0px, transparent 50%),
+            radial-gradient(at 0% 100%, hsla(180, 100%, 85%, 1) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, hsla(280, 100%, 95%, 1) 0px, transparent 50%);
+        background-attachment: fixed;
         color: #1E293B; /* slate-800 */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -24,11 +32,11 @@
     }
 
     .text-shadow-glow {
-        text-shadow: 0 4px 20px rgba(37, 99, 235, 0.15); /* Softer blue glow */
+        text-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
     }
     
     .glass-panel {
-        @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm;
+        @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
     }
 }
 
@@ -43,12 +51,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #CBD5E1; /* slate-300 */
+    background: #94A3B8; /* slate-400 */
     border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8; /* slate-400 */
+    background: #64748B; /* slate-500 */
 }
 
 @keyframes marquee {
