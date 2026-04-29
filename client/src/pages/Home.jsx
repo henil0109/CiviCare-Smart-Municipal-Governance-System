@@ -5,7 +5,7 @@ import {
     FileText, ShieldCheck, Activity, CheckCircle, Smartphone, 
     BarChart3, Users, Zap, Globe, ArrowRight, X, ChevronRight, 
     ChevronLeft, Camera, Clock, FileSignature, Scale, Building,
-    MapPin, Network
+    MapPin, Network, Award
 } from 'lucide-react';
 
 // --- CountUp Component ---
