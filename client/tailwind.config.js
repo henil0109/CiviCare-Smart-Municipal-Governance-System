@@ -6,48 +6,41 @@ export default {
     ],
     safelist: [
         {
-            pattern: /(bg|text|border|shadow|from|to)-(emerald|blue|yellow|orange|green|red|purple|slate)-(50|100|200|300|400|500|600|700|800|900)/,
+            pattern: /(bg|text|border|shadow|from|to)-(emerald|blue|yellow|orange|green|red|purple|slate|indigo|cyan)-(50|100|200|300|400|500|600|700|800|900)/,
             variants: ['hover', 'group-hover'],
         },
     ],
     theme: {
         extend: {
             colors: {
-                // Primary e-gov colors
-                primary: "#1A365D",
-                secondary: "#2DD4BF",
-                accent: "#F59E0B",
-                background: "#FDFBF7", 
-                
-                // SPICED MOCHA OVERRIDE
-                // Replaces "slate" with warm, earthy espresso and cream tones
+                // To allow the stunning mesh gradient to shine through, we make our base slate colors semi-transparent glass
                 slate: {
-                    50: '#FDFBF7',  // creamy vanilla
-                    100: '#F4EBE1', // light latte
-                    200: '#E6D5C3', // warm sand
-                    300: '#D4BCA1', // beige
-                    400: '#BC9F7D', // warm taupe
-                    500: '#A3815C', // mocha
-                    600: '#8A6543', // milk chocolate
-                    700: '#6F4C3E', // spiced mocha (core)
-                    800: '#54362A', // espresso
-                    900: '#3A2318', // dark roast
-                    950: '#26150D', // almost black
+                    50: 'rgba(255, 255, 255, 0.65)',  // Beautiful frosted glass effect
+                    100: 'rgba(255, 255, 255, 0.85)', // Stronger glass
+                    200: '#DDE5EE',
+                    300: '#C2D1E0',
+                    400: '#9EAFC4',
+                    500: '#7E92AB',
+                    600: '#64768D',
+                    700: '#506074',
+                    800: '#424F61',
+                    900: '#1E293B',
+                    950: '#0F172A',
                 },
                 
-                // Replaces "blue" with spiced terracotta/rust tones for buttons and accents
+                // Extremely vibrant Electric Royal Blue (appealing and attractive)
                 blue: {
-                    50: '#FEF6F1',  
-                    100: '#FDE8DD', 
-                    200: '#FBD0BC', 
-                    300: '#F7B092', 
-                    400: '#F1865F', 
-                    500: '#EA5D30', 
-                    600: '#D8421A', // spiced orange
-                    700: '#B43115', // terracotta
-                    800: '#9A2B18', // rust
-                    900: '#7E2617', // dark clay
-                    950: '#441008',
+                    50: '#F0F6FF',
+                    100: '#E0EDFF',
+                    200: '#CBE0FF',
+                    300: '#A8CCFF',
+                    400: '#7EADFF',
+                    500: '#3B82F6', 
+                    600: '#2563EB', // Vibrant Royal Blue
+                    700: '#1D4ED8', // Deep interactive blue
+                    800: '#1E40AF',
+                    900: '#1E3A8A',
+                    950: '#172554',
                 }
             },
             fontFamily: {
