@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
+// Vercel Rebuild Trigger - Multilingual Update 2026-05-02
 import { AnimatePresence } from 'framer-motion';
 
 
