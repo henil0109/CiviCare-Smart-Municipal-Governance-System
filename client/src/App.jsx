@@ -36,6 +36,7 @@ import ResetPassword from './pages/ResetPassword';
 
 import MunicipalInfo from './pages/MunicipalInfo';
 import ChatbotWidget from './components/ChatbotWidget';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, roleRequired }) => {
@@ -195,6 +196,7 @@ function App() {
             <Router>
                 <AnimatedRoutes user={user} setUser={setUser} />
                 <ChatbotWidget user={user} />
+                <LanguageSwitcher />
             </Router>
         </ErrorBoundary>
     );

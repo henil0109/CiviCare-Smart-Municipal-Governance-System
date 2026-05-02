@@ -68,3 +68,24 @@
         transform: translateX(-50%);
     }
 }
+
+/* Hide Google Translate top bar and fix body top margin */
+body {
+    top: 0 !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+#goog-gt-tt {
+    display: none !important;
+}
+
+.goog-te-spinner-pos {
+    display: none !important;
+}
+
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+    display: none !important;
+}
