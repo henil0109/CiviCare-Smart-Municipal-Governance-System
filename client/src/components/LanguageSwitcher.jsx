@@ -38,7 +38,7 @@ const LanguageSwitcher = () => {
     };
 
     return (
-        <div className="fixed top-4 right-4 z-50 font-outfit">
+        <div className="fixed top-4 right-72 z-50 font-outfit">
             <div className="flex flex-col items-end">
                 {/* Tiny Label */}
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 mr-2 opacity-80">
