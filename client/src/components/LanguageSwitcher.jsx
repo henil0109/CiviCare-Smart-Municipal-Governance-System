@@ -37,14 +37,11 @@ const LanguageSwitcher = () => {
         setIsOpen(false);
     };
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const isStaff = user.role === 'admin' || user.role === 'supervisor';
-
     return (
-        <div className={`fixed top-4 ${isStaff ? 'right-72' : 'right-4'} z-50 font-outfit transition-all duration-500`}>
-            <div className="flex flex-col items-end">
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-[60] font-outfit">
+            <div className="flex flex-col items-center">
                 {/* Tiny Label */}
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 mr-2 opacity-80">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 opacity-80">
                     Switch to local language
                 </span>
                 <div className="relative">
